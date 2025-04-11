@@ -259,3 +259,4 @@ try:
     from local_settings import *
 except ImportError:
     pass
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = 'id'
