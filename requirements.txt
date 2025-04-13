@@ -50,7 +50,7 @@ sqlparse==0.3.1
 stripe==2.50.0
 swapper==1.1.2.post1
 typed-ast==1.5.5
-urllib3==1.26.5
+urllib3==1.25.8
 wrapt==1.11.2
 django-ical==1.7.1
 icalendar==4.0.7
