@@ -56,3 +56,4 @@ django-ical==1.7.1
 icalendar==4.0.7
 django-markdownify==0.9.0
 setuptools==78.1.0
+pid==3.0.4
