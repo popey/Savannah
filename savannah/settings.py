@@ -247,3 +247,10 @@ GITHUB_SCOPE = "read:org,public_repo"
 TOTD_EXCLUDE_NS = ['admin']
 
 DJSTRIPE_WEBHOOK_EVENT_CALLBACK = "billing.callbacks.stripe_event_callback"
+# Stripe fake keys
+DJSTRIPE_WEBHOOK_SECRET = "whsec_"
+STRIPE_TEST_SECRET_KEY = "sk_test_xx"
+STRIPE_TEST_PUBLIC_KEY = "pk_test_xx"
+STRIPE_LIVE_SECRET_KEY = "sk_live_xx"
+STRIPE_LIVE_PUBLIC_KEY = "pk_live_xx"
+STRIPE_SECRET_KEY = "sk_xx"
