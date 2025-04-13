@@ -4,7 +4,7 @@ import re
 import string
 from corm.models import Tag, Contribution, Community
 
-PUNCTUATION = "!\"&'()*+,.:;<=>?@[\]^_`{|}~/\r\n"
+PUNCTUATION = "!\"&'()*+,.:;<=>?@[]^_`{|}~/\r\n"
 table = str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION))
 
 class Command(BaseCommand):
