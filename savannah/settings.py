@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '$2f0-ie0xkn__5sy1r*ypak(8v5v8&^@awp#*6^tkub6pyyr7^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 ALPHA = False
 BETA = True
 OPEN_BETA = True
@@ -32,10 +32,10 @@ IS_DEMO = False
 DEMO_POOL = 3
 DEMO_DURATION_HOURS = 24
 DEMO_SIZE = 500
-SITE_ROOT = 'https://savannahcrm.com'
-SITE_DOMAIN = 'savannahcrm.com'
-SITE_NAME = 'Savannah CRM'
-SYSTEM_USER = 'admin'
+SITE_ROOT = os.environ.get('SITE_ROOT')
+SITE_DOMAIN = os.environ.get('SITE_DOMAIN')
+SITE_NAME = os.environ.get('SITE_NAME')
+SYSTEM_USER = os.environ.get('SYSTEM_USER')
 FONTAWESOME_KIT_URL = 'https://kit.fontawesome.com/a160749d77.js'
 
 PUBLIC_EMAIL_DOMAINS = [
@@ -170,16 +170,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'savannah.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+# # Database
+# # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -247,6 +257,16 @@ GITHUB_SCOPE = "read:org,public_repo"
 TOTD_EXCLUDE_NS = ['admin']
 
 DJSTRIPE_WEBHOOK_EVENT_CALLBACK = "billing.callbacks.stripe_event_callback"
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = 'id'
+
+DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET')
+STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_TEST_SECRET_KEY')
+STRIPE_LIVE_SECRET_KEY = os.environ.get('STRIPE_LIVE_SECRET_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+
+DISCORD_CLIENT_ID = os.environ.get('DISCORD_CLIENT_ID')
+DISCORD_APP_SECRET = os.environ.get('DISCORD_APP_SECRET')
+DISCORD_BOT_SECRET = os.environ.get('DISCORD_BOT_SECRET')
 
 ##################
 # LOCAL SETTINGS #
@@ -259,4 +279,3 @@ try:
     from local_settings import *
 except ImportError:
     pass
-DJSTRIPE_FOREIGN_KEY_TO_FIELD = 'id'
