@@ -254,3 +254,17 @@ STRIPE_TEST_PUBLIC_KEY = "pk_test_xx"
 STRIPE_LIVE_SECRET_KEY = "sk_live_xx"
 STRIPE_LIVE_PUBLIC_KEY = "pk_live_xx"
 STRIPE_SECRET_KEY = "sk_xx"
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = 'id'
+
+
+##################
+# LOCAL SETTINGS #
+##################
+
+# Allow any settings to be defined in local_settings.py which should be
+# ignored in your version control system allowing for settings to be
+# defined per machine.
+try:
+    from local_settings import *
+except ImportError:
+    pass

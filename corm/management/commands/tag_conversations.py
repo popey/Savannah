@@ -4,7 +4,7 @@ import re
 import string
 from corm.models import Tag, Conversation, Community, Channel
 
-PUNCTUATION = "!\"&'()*+,.:;<=>?@[\]^_`{|}~/\r\n"
+PUNCTUATION = "!\"&'()*+,.:;<=>?@[]^_`{|}~/\r\n"
 
 class Command(BaseCommand):
     help = 'Auto-Tag conversations based on Tag keywords'

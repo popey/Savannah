@@ -99,7 +99,7 @@ class PluginImporter:
         self._link_cache = dict()
         self.API_HEADERS = dict()
         self.TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
-        self.TAGGED_USER_MATCHER = re.compile('\@([a-zA-Z0-9]+)')
+        self.TAGGED_USER_MATCHER = re.compile(r'\@([a-zA-Z0-9]+)')
         self.API_BACKOFF_ATTEMPTS = getattr(settings, 'API_BACKOFF_ATTEMPTS', 5)
         self.API_BACKOFF_SECONDS = getattr(settings, 'API_BACKOFF_SECONDS', 10)
 

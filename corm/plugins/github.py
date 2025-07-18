@@ -259,7 +259,7 @@ class GithubImporter(PluginImporter):
       owner = github_path[3]
       repo = github_path[4]
 
-      tag_matcher = re.compile('\@([a-zA-Z0-9]+)')
+      tag_matcher = re.compile(r'\@([a-zA-Z0-9]+)')
       found_members = dict()
 
       from_date_str = from_date.strftime(GITHUB_TIMESTAMP)
