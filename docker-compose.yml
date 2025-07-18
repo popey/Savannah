@@ -1,0 +1,33 @@
+
+services:
+  app:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8085:8000"
+    volumes:
+      - .:/app
+    command: >
+      bash -c "./entrypoint.sh"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
