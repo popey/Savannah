@@ -6,11 +6,3 @@ local_settings.py
 /static/
 /env/
 **/.DS_Store
-.env
-.venv
-venv/
-ENV/
-env.bak/
-venv.bak/
-*.log
-__pycache__/
