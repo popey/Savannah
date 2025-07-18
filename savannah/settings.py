@@ -130,8 +130,7 @@ CORM_PLUGINS = [
     "corm.plugins.rss.RssPlugin",
     "corm.plugins.slack.SlackPlugin",
     "corm.plugins.stackexchange.StackExchangePlugin",
-    "corm.plugins.salesforce.SalesforcePlugin",
-    "corm.plugins.twitter.TwitterPlugin"
+    "corm.plugins.salesforce.SalesforcePlugin"
 ]
 
 MIDDLEWARE = [
@@ -248,3 +247,15 @@ GITHUB_SCOPE = "read:org,public_repo"
 TOTD_EXCLUDE_NS = ['admin']
 
 DJSTRIPE_WEBHOOK_EVENT_CALLBACK = "billing.callbacks.stripe_event_callback"
+
+##################
+# LOCAL SETTINGS #
+##################
+
+# Allow any settings to be defined in local_settings.py which should be
+# ignored in your version control system allowing for settings to be
+# defined per machine.
+try:
+    from local_settings import *
+except ImportError:
+    pass
