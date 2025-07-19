@@ -21,6 +21,10 @@ RUN apt update \
 #RUN apt update \
 #    && apt install -y default-mysql-client libmariadb-dev pkg-config
 
+# Required by pillow
+RUN apt update \
+    && apt install -y libjpeg62-turbo-dev zlib1g-dev
+
 # Cleanup apt
 RUN rm -rf /var/lib/apt/lists/* \
     && apt clean
