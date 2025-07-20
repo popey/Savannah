@@ -275,6 +275,7 @@ class GithubImporter(PluginImporter):
                 participants = set()
                 conversations = set()
                 tstamp = datetime.datetime.strptime(issue['created_at'], GITHUB_TIMESTAMP)
+                tstamp = timezone.make_aware(tstamp, timezone.utc)
                 github_convo_link = issue['url']
                 if self.verbosity >= 3:
                     print("Found issue: %s" % github_convo_link)
@@ -309,6 +310,7 @@ class GithubImporter(PluginImporter):
                         comments = comment_resp.json()
                         for comment in comments:
                             comment_tstamp = datetime.datetime.strptime(comment['created_at'], GITHUB_TIMESTAMP)
+                            comment_tstamp = timezone.make_aware(comment_tstamp, timezone.utc)
                             comment_user_id = 'github.com/%s' % comment['user']['login']
                             comment_member = self.make_member(comment_user_id, channel=channel, detail=comment['user']['login'], tstamp=comment_tstamp, name=comment['user']['login'], speaker=True)
                             comment_body = comment['body']

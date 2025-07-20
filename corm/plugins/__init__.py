@@ -11,6 +11,7 @@ from corm.email import EmailMessage
 from django.conf import settings
 from django.shortcuts import reverse
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 from notifications.signals import notify
 from notifications.models import Notification
 
@@ -135,7 +136,7 @@ class PluginImporter:
             if contact_matches.count() == 0:
                 first_seen = tstamp
                 if first_seen is None:
-                    first_seen = datetime.datetime.utcnow()
+                    first_seen = timezone.now()
                 last_seen = None
                 if speaker and tstamp:
                     last_seen = tstamp
@@ -450,7 +451,7 @@ class PluginImporter:
     def strptime(self, dtimestamp):
         tstamp = datetime.datetime.strptime(dtimestamp, self.TIMESTAMP_FORMAT)
         if not settings.USE_TZ:
-            tstamp = tstamp.replace(tzinfo=None)
+            tstamp = timezone.make_aware(tstamp, timezone.utc)
         return tstamp
 
     def get_user_tags(self, content):
@@ -491,18 +492,18 @@ class PluginImporter:
             first_import = self.first_import
             try:
                 if channel.first_import is None:
-                    channel.first_import = datetime.datetime.utcnow()
+                    channel.first_import = timezone.now()
                     first_import = True
                     channel.save()
 
                 if channel.last_import and not self.full_import:
                     from_date = channel.last_import
                 else:
-                    from_date = datetime.datetime.utcnow() - datetime.timedelta(days=settings.MAX_IMPORT_HISTORY_DAYS)
+                    from_date = timezone.now() - datetime.timedelta(days=settings.MAX_IMPORT_HISTORY_DAYS)
                     # Because we're going a full import, set the last_imported to now to avoid the next run
                     # also trying to do a full import if this one hasn't finished yet.
                     full_import = True
-                    channel.last_import = datetime.datetime.utcnow()
+                    channel.last_import = timezone.now()
                     channel.save()
                 if self.verbosity >= 2:
                     print("From %s since %s" % (channel.name, from_date))
@@ -523,7 +524,7 @@ class PluginImporter:
                     )
                 if channel.oldest_import is None or from_date < channel.oldest_import:
                     channel.oldest_import = from_date
-                channel.last_import = datetime.datetime.utcnow()
+                channel.last_import = timezone.now()
                 channel.import_failed_attempts = 0
                 channel.import_failed_message = None
                 channel.save()
@@ -557,7 +558,7 @@ class PluginImporter:
 
         self.post_import(new_only, channels)
 
-        self.source.last_import = datetime.datetime.utcnow()
+        self.source.last_import = timezone.now()
         if self.source.first_import is None:
             self.source.first_import = self.source.last_import
         if len(failures) > 0:
