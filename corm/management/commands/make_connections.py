@@ -4,6 +4,7 @@ import re
 import string
 from django.db.models import Count, Q, F, Value as V, fields, Min
 from django.db.models.functions import Concat
+from django.utils import timezone
 from corm.models import Conversation, Community, Source, ConnectionManager, MemberConnection, Participant, Project
 
 class Command(BaseCommand):
@@ -63,13 +64,13 @@ class Command(BaseCommand):
         default_project = Project.objects.get(community=community, default_project=True)
 
         # Zero out old connections
-        MemberConnection.objects.filter(last_connected__lt=datetime.datetime.utcnow() - datetime.timedelta(days=default_project.threshold_period)).update(connection_count=0)
+        MemberConnection.objects.filter(last_connected__lt=timezone.now() - datetime.timedelta(days=default_project.threshold_period)).update(connection_count=0)
 
         # Count connection events
         print("Calculating number of connection")
         found = set()
-        participants = Participant.objects.filter(community=community, timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(days=default_project.threshold_period)).exclude(member=F('initiator'))
-        participants = participants.values('initiator', 'member').annotate(connection_count=Count('conversation', filter=Q(conversation__timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(days=default_project.threshold_period)), distinct=True))
+        participants = Participant.objects.filter(community=community, timestamp__gte=timezone.now() - datetime.timedelta(days=default_project.threshold_period)).exclude(member=F('initiator'))
+        participants = participants.values('initiator', 'member').annotate(connection_count=Count('conversation', filter=Q(conversation__timestamp__gte=timezone.now() - datetime.timedelta(days=default_project.threshold_period)), distinct=True))
         participants = participants.order_by('-connection_count')
         for connection in participants:
             from_to = "%s-%s" % (connection['initiator'], connection['member'])

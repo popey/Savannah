@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
 import datetime
 import re
 import string
@@ -27,7 +28,7 @@ class Command(BaseCommand):
       else:
           communities = Community.objects.filter(status=Community.ACTIVE)
 
-      past_year = datetime.datetime.utcnow() - datetime.timedelta(days=365)
+      past_year = timezone.now() - datetime.timedelta(days=365)
       newest_tag = past_year
       for community in communities:
         print("Tagging conversations in  %s" % community.name)
@@ -59,7 +60,7 @@ class Command(BaseCommand):
           else:
             from_tstamp = channel.last_tagged
           print("Tagging channel %s from %s" % (channel.name, from_tstamp))
-          channel.last_tagged = datetime.datetime.utcnow()
+          channel.last_tagged = timezone.now()
           conversations = Conversation.objects.filter(channel=channel, timestamp__gte=from_tstamp)
           count = conversations.count()
           print("Tagging %s conversations..." % count)

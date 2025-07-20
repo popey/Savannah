@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 import datetime
 from django.db.models import Count, Q
 from django.shortcuts import reverse
+from django.utils import timezone
 from corm.models import Community, Member, Conversation, Event
 from corm.models import pluralize
 
@@ -39,7 +40,7 @@ class Command(BaseCommand):
             communities = Community.objects.filter(status=Community.ACTIVE)
 
         for community in communities:
-            for event in Event.objects.filter(community=community).filter(Q(impact=0)|Q(start_timestamp__lte=datetime.datetime.utcnow(), start_timestamp__gt=datetime.datetime.utcnow() - (2 * CONTEXT_TIMESPAN))):
+            for event in Event.objects.filter(community=community).filter(Q(impact=0)|Q(start_timestamp__lte=timezone.now(), start_timestamp__gt=timezone.now() - (2 * CONTEXT_TIMESPAN))):
                 try:
                     self.calculate_event_impact(event)
                 except Exception as e:
@@ -50,8 +51,8 @@ class Command(BaseCommand):
         community = event.community
 
         event_context = CONTEXT_TIMESPAN
-        if event.start_timestamp > datetime.datetime.utcnow() - (2 * event_context):
-            event_context = (datetime.datetime.utcnow() - event.start_timestamp)/2
+        if event.start_timestamp > timezone.now() - (2 * event_context):
+            event_context = (timezone.now() - event.start_timestamp)/2
         baseline_start = event.start_timestamp - (2 * event_context)
         baseline_end = event.start_timestamp - event_context
         impact_end = event.start_timestamp + event_context

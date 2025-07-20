@@ -8,6 +8,7 @@ from django.shortcuts import reverse
 from django.db.models import F, Q, Count, Max, Min
 from django.db.models.functions import Trunc
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 
 
 from corm.models import *
@@ -37,7 +38,7 @@ class Command(BaseCommand):
         if for_date:
             self.tstamp = dateutil.parser.parse(for_date)
         else:
-            self.tstamp = datetime.datetime.utcnow()
+            self.tstamp = timezone.now()
 
         for community in communities:
             self.make_growth_report(community)

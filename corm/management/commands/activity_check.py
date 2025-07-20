@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 import datetime
 from django.shortcuts import reverse
 from django.db.models import F, Q, Count, Max, Min
+from django.utils import timezone
 
 from corm.models import Community, Member, Conversation, Tag, Contact, SuggestMemberMerge, SuggestMemberTag, SuggestConversationTag
 from corm.models import pluralize
@@ -53,8 +54,8 @@ class Command(BaseCommand):
     #         )
 
     def check_for_inactivity(self, community):
-        members = Member.objects.filter(community=community, last_seen__lte=datetime.datetime.utcnow() - datetime.timedelta(days=community.inactivity_threshold_days), last_seen__gt=datetime.datetime.utcnow() - datetime.timedelta(days=community.inactivity_threshold_days+1))
-        members = members.annotate(past_activity=Count('speaker_in', distinct=True, filter=Q(speaker_in__timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(days=community.inactivity_threshold_previous_days))))
+        members = Member.objects.filter(community=community, last_seen__lte=timezone.now() - datetime.timedelta(days=community.inactivity_threshold_days), last_seen__gt=timezone.now() - datetime.timedelta(days=community.inactivity_threshold_days+1))
+        members = members.annotate(past_activity=Count('speaker_in', distinct=True, filter=Q(speaker_in__timestamp__gte=timezone.now() - datetime.timedelta(days=community.inactivity_threshold_previous_days))))
         for member in members:
             if member.past_activity >= community.inactivity_threshold_previous_activity:
                 print("Member has stopped being active: %s (%s conversations in the last 90 days, not seen since %s)" % (member.name, member.past_activity, member.last_seen))
@@ -69,11 +70,11 @@ class Command(BaseCommand):
                 )
 
     def check_for_resuming_activity(self, community):
-        members = Member.objects.filter(community=community, last_seen__gte=datetime.datetime.utcnow() - datetime.timedelta(days=1))
-        members = members.annotate(last_activity=Max('speaker_in__timestamp', filter=Q(speaker_in__timestamp__lt=datetime.datetime.utcnow() - datetime.timedelta(days=1))))
-        members = members.annotate(past_activity=Count('speaker_in', distint=True, filter=Q(speaker_in__timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(days=community.resuming_threshold_previous_days))))
+        members = Member.objects.filter(community=community, last_seen__gte=timezone.now() - datetime.timedelta(days=1))
+        members = members.annotate(last_activity=Max('speaker_in__timestamp', filter=Q(speaker_in__timestamp__lt=timezone.now() - datetime.timedelta(days=1))))
+        members = members.annotate(past_activity=Count('speaker_in', distint=True, filter=Q(speaker_in__timestamp__gte=timezone.now() - datetime.timedelta(days=community.resuming_threshold_previous_days))))
         for member in members:
-            if member.past_activity >= community.resuming_threshold_previous_activity and member.last_activity is not None and member.last_activity < datetime.datetime.utcnow() - datetime.timedelta(days=community.resuming_threshold_days):
+            if member.past_activity >= community.resuming_threshold_previous_activity and member.last_activity is not None and member.last_activity < timezone.now() - datetime.timedelta(days=community.resuming_threshold_days):
                 print("Member became active again: %s (previously seen %s)" % (member.name, member.last_activity))
                 recipients = community.managers or community.owner
                 notify.send(member, 
